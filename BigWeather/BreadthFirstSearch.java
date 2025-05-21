@@ -25,21 +25,13 @@ public class BreadthFirstSearch {
 			if ( l.size() == 1 )
 				continue;
 			
-			Queue<Integer> q = new LinkedList<Integer>();
 			buckets.add(l.peek());
-			
-			q.offer(l.peek());
-			while ( !q.isEmpty() ) {
+			int u = l.peek();			
+			for ( int v : graph.getEdges(u) ) {
 				
-				int u = q.poll();
-				
-				for ( int v : graph.getEdges(u) ) {
+				if ( prev[v] < 0 ) {
 					
-					if ( prev[v] < 0 ) {
-						
-						prev[v] = u;
-						
-					}
+					prev[v] = u;
 					
 				}
 				
