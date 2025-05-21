@@ -1,5 +1,6 @@
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.ListIterator;
 
 /*
 * This file contains the algorithm implementation of Kirchhoff's Theorem
@@ -13,29 +14,37 @@ public class KirchhoffTheorem {
 	public static int algorithm(Graph graph, Collection<LinkedList<Integer>> CC) {
 		
 		int sum = 0;
-		// We use this count variable to keep track of how many nodes
-		// we've gone through in our Graph, to keep it from failing.
-		int count = 0;
 		
-		// Enhanced for-loop which goes over each Connected Component.
-		for ( LinkedList<Integer> l : CC) {
+		for ( LinkedList<Integer> l : CC ) {
 			
-			// Instatiate a the Laplacian matrix for each component.
+						// Instatiate the Laplacian Matrix for each Connected Component.
+
 			int[][] matrix = new int[l.size()][l.size()];
+			int i = 0;
 			for ( int v : l ) {
 				
-				matrix[v - count][v - count] = graph.getEdges(v).size();
+				int j = 0;
+				
+				matrix[i][i] = graph.getEdges(v).size();
 				for ( int u : graph.getEdges(v) ) {
 					
-					matrix[v - count][u - count] = -1;
+					if ( j == i )
+						continue;
+					
+					matrix[i][j] = -1;
+					matrix[j][i] = -1;
+					
+					j++;
 					
 				}
 				
+				i++;
+				
 			}
 			
-			// Instatiate the minor of the Laplacian matrix.
+			// Get the Minor of the Laplacian Matrix.
 			int[][] minor = new int[matrix.length - 1][matrix.length - 1];
-			for (int i = 1; i < matrix.length; i++) {
+			for (i = 1; i < matrix.length; i++) {
 				
 				for (int j = 1; j < matrix[i].length; j++) {
 					
@@ -45,10 +54,9 @@ public class KirchhoffTheorem {
 				
 			}
 			
-			// Add-up the count.
-			count += matrix.length;
-			// Sum the determinant of the minor of the Laplacian Matrix for
-			// the Connected Component.
+			// The determinant is the amount of possible bond configurations.
+			// Times that with the amount of dynos and we get a sum of possible
+			// configuration combinations.
 			sum += l.size() * getDeterminant(minor, minor.length);
 			
 		}
